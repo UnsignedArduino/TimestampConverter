@@ -1,5 +1,6 @@
 import tkinter as tk
 
+import arrow
 from TkZero.Entry import Entry
 from TkZero.Label import Label
 from TkZero.MainWindow import MainWindow
@@ -70,9 +71,15 @@ class TimestampConverter(MainWindow):
         """
         self.position = self.winfo_pointerxy()
         self.show()
+
         self.ts_entry.read_only = False
         self.ts_entry.value = str(timestamp)
         self.ts_entry.read_only = True
+
+        self.ts_abs_entry.read_only = False
+        date_format = "HH:mm:ss ddd, MMM Do, YYYY"
+        self.ts_abs_entry.value = arrow.get(timestamp).format(date_format)
+        self.ts_abs_entry.read_only = True
 
     def close_window(self):
         """
