@@ -53,6 +53,7 @@ class TimestampConverter(MainWindow):
 
         :param timestamp: A float.
         """
+        self.position = self.winfo_pointerxy()
         self.show()
         self.ts_entry.read_only = False
         self.ts_entry.value = str(timestamp)
