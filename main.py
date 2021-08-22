@@ -5,6 +5,8 @@ from TkZero.Entry import Entry
 from TkZero.Label import Label
 from TkZero.MainWindow import MainWindow
 
+date_format = "HH:mm:ss ddd, MMM Do, YYYY"
+
 
 class TimestampConverter(MainWindow):
     def __init__(self):
@@ -26,26 +28,40 @@ class TimestampConverter(MainWindow):
         """
         Make the GUI.
         """
-        self.ts_label = Label(parent=self, text="Timestamp detected:")
+        self.ts_label = Label(parent=self, text="Timestamp detected: ")
         self.ts_label.grid(row=0, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_entry = Entry(parent=self, width=30)
         self.ts_entry.read_only = True
         self.ts_entry.grid(row=0, column=1, padx=1, pady=1, sticky=tk.NW)
 
+        self.ts_now_label = Label(parent=self, text="Timestamp now: ")
+        self.ts_now_label.grid(row=1, column=0, padx=1, pady=1, sticky=tk.NW)
+
+        self.ts_now_entry = Entry(parent=self, width=30)
+        self.ts_now_entry.read_only = True
+        self.ts_now_entry.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
+
         self.ts_abs_label = Label(parent=self, text="Absolute date: ")
-        self.ts_abs_label.grid(row=1, column=0, padx=1, pady=1, sticky=tk.NW)
+        self.ts_abs_label.grid(row=2, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_abs_entry = Entry(parent=self, width=30)
         self.ts_abs_entry.read_only = True
-        self.ts_abs_entry.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
+        self.ts_abs_entry.grid(row=2, column=1, padx=1, pady=1, sticky=tk.NW)
+
+        self.ts_abs_now_label = Label(parent=self, text="Date now: ")
+        self.ts_abs_now_label.grid(row=3, column=0, padx=1, pady=1, sticky=tk.NW)
+
+        self.ts_abs_now_entry = Entry(parent=self, width=30)
+        self.ts_abs_now_entry.read_only = True
+        self.ts_abs_now_entry.grid(row=3, column=1, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_rel_label = Label(parent=self, text="Relative to now: ")
-        self.ts_rel_label.grid(row=2, column=0, padx=1, pady=1, sticky=tk.NW)
+        self.ts_rel_label.grid(row=4, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_rel_entry = Entry(parent=self, width=30)
         self.ts_rel_entry.read_only = True
-        self.ts_rel_entry.grid(row=2, column=1, padx=1, pady=1, sticky=tk.NW)
+        self.ts_rel_entry.grid(row=4, column=1, padx=1, pady=1, sticky=tk.NW)
 
     def check_for_new_clipboard_entry(self, reschedule: int = 1000):
         """
@@ -70,18 +86,44 @@ class TimestampConverter(MainWindow):
         :param timestamp: A float.
         """
         self.position = self.winfo_pointerxy()
+
         self.show()
+
+        self.update_now_ts()
 
         self.ts_entry.read_only = False
         self.ts_entry.value = str(timestamp)
         self.ts_entry.read_only = True
 
         self.ts_abs_entry.read_only = False
-        date_format = "HH:mm:ss ddd, MMM Do, YYYY"
         self.ts_abs_entry.value = arrow.get(timestamp).format(date_format)
         self.ts_abs_entry.read_only = True
 
+        self.update_date_now()
+
         self.update_relative_ts(timestamp)
+
+    def update_now_ts(self):
+        """
+        Update the now timestamp every second until the window is hidden.
+        """
+        self.ts_now_entry.read_only = False
+        self.ts_now_entry.value = str(arrow.now().timestamp())
+        self.ts_now_entry.read_only = True
+
+        if self.shown:
+            self.after(50, self.update_now_ts)
+
+    def update_date_now(self):
+        """
+        Update the date now every second until the window is hidden.
+        """
+        self.ts_abs_now_entry.read_only = False
+        self.ts_abs_now_entry.value = str(arrow.now().format(date_format))
+        self.ts_abs_now_entry.read_only = True
+
+        if self.shown:
+            self.after(1000, self.update_date_now)
 
     def update_relative_ts(self, timestamp: float):
         """
