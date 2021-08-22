@@ -28,7 +28,7 @@ class TimestampConverter(MainWindow):
         """
         Make the GUI.
         """
-        self.ts_label = Label(parent=self, text="Timestamp detected: ")
+        self.ts_label = Label(parent=self, text="Detected timestamp: ")
         self.ts_label.grid(row=0, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_entry = Entry(parent=self, width=30)
@@ -42,7 +42,7 @@ class TimestampConverter(MainWindow):
         self.ts_now_entry.read_only = True
         self.ts_now_entry.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
 
-        self.ts_abs_label = Label(parent=self, text="Absolute date: ")
+        self.ts_abs_label = Label(parent=self, text="Detected absolute date: ")
         self.ts_abs_label.grid(row=2, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_abs_entry = Entry(parent=self, width=30)
@@ -56,7 +56,7 @@ class TimestampConverter(MainWindow):
         self.ts_abs_now_entry.read_only = True
         self.ts_abs_now_entry.grid(row=3, column=1, padx=1, pady=1, sticky=tk.NW)
 
-        self.ts_rel_label = Label(parent=self, text="Relative to now: ")
+        self.ts_rel_label = Label(parent=self, text="Detected relative to now: ")
         self.ts_rel_label.grid(row=4, column=0, padx=1, pady=1, sticky=tk.NW)
 
         self.ts_rel_entry = Entry(parent=self, width=30)
