@@ -81,6 +81,21 @@ class TimestampConverter(MainWindow):
         self.ts_abs_entry.value = arrow.get(timestamp).format(date_format)
         self.ts_abs_entry.read_only = True
 
+        self.update_relative_ts(timestamp)
+
+    def update_relative_ts(self, timestamp: float):
+        """
+        Update the relative timestamp every second until the window is hidden.
+
+        :param timestamp: A float.
+        """
+        self.ts_rel_entry.read_only = False
+        self.ts_rel_entry.value = arrow.get(timestamp).humanize()
+        self.ts_rel_entry.read_only = True
+
+        if self.shown:
+            self.after(1000, lambda: self.update_relative_ts(timestamp))
+
     def close_window(self):
         """
         Close the window.
