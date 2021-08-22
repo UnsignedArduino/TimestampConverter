@@ -24,6 +24,10 @@ class TimestampConverter(MainWindow):
         self.last_cb_entry = self.clipboard_get()
         self.check_for_new_clipboard_entry()
 
+        self.last_x, self.last_y = 0, 0
+        self.bind_to_event("<Button-1>", self.last_clicked)
+        self.bind_to_event("<B1-Motion>", self.move_window)
+
     def make_gui(self):
         """
         Make the GUI.
@@ -178,6 +182,24 @@ class TimestampConverter(MainWindow):
         self.deiconify()
         self.lift()
         self.shown = True
+
+    def last_clicked(self, event):
+        """
+        Save where we last clicked.
+
+        :param event: An event that Tkinter passes in.
+        """
+        self.last_x, self.last_y = event.x, event.y
+
+    def move_window(self, event):
+        """
+        Move the window.
+
+        :param event: An event that Tkinter passes in.
+        """
+        self.geometry(f"+{event.x - self.last_x + self.position.x}"
+                      f"+{event.y - self.last_y + self.position.y}")
+
 
 
 tsc = TimestampConverter()
