@@ -93,7 +93,7 @@ class TimestampConverter(MainWindow):
         current_cb_entry = self.clipboard_get()
         if current_cb_entry != self.last_cb_entry:
             self.last_cb_entry = current_cb_entry
-            filtered_entry = current_cb_entry.replace(",", "").replace(".", "")
+            filtered_entry = current_cb_entry.replace(",", "").replace(".", "").replace(" ", "")
             if filtered_entry.isnumeric():
                 self.show_timestamp(float(current_cb_entry))
         if reschedule >= 0:
