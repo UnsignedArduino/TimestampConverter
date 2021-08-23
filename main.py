@@ -19,14 +19,16 @@ class TimestampConverter(MainWindow):
         self.hide()
 
         self.shift_pressed = False
-        self.bind_shift_keys()
+        self.bind_to_event("<Shift_L>", lambda _: self.set_shift_state(True))
+        self.bind_to_event("<Shift_R>", lambda _: self.set_shift_state(True))
+        self.bind_to_event("<KeyRelease-Shift_L>", lambda _: self.set_shift_state(False))
+        self.bind_to_event("<KeyRelease-Shift_R>", lambda _: self.set_shift_state(False))
 
-        self.last_cb_entry = self.clipboard_get()
+        try:
+            self.last_cb_entry = self.clipboard_get()
+        except tk.TclError:
+            self.last_cb_entry = ""
         self.check_for_new_clipboard_entry()
-
-        self.last_x, self.last_y = 0, 0
-        self.bind_to_event("<Button-1>", self.last_clicked)
-        self.bind_to_event("<B1-Motion>", self.move_window)
 
     def make_gui(self):
         """
@@ -111,9 +113,10 @@ class TimestampConverter(MainWindow):
         """
         Update the now timestamp every second until the window is hidden.
         """
-        self.ts_now_entry.read_only = False
-        self.ts_now_entry.value = str(arrow.now().timestamp())
-        self.ts_now_entry.read_only = True
+        if not self.ts_now_entry.selection_present():
+            self.ts_now_entry.read_only = False
+            self.ts_now_entry.value = str(arrow.now().timestamp())
+            self.ts_now_entry.read_only = True
 
         if self.shown:
             self.after(50, self.update_now_ts)
@@ -122,9 +125,10 @@ class TimestampConverter(MainWindow):
         """
         Update the date now every second until the window is hidden.
         """
-        self.ts_abs_now_entry.read_only = False
-        self.ts_abs_now_entry.value = str(arrow.now().format(date_format))
-        self.ts_abs_now_entry.read_only = True
+        if not self.ts_abs_now_entry.selection_present():
+            self.ts_abs_now_entry.read_only = False
+            self.ts_abs_now_entry.value = str(arrow.now().format(date_format))
+            self.ts_abs_now_entry.read_only = True
 
         if self.shown:
             self.after(1000, self.update_date_now)
@@ -135,9 +139,10 @@ class TimestampConverter(MainWindow):
 
         :param timestamp: A float.
         """
-        self.ts_rel_entry.read_only = False
-        self.ts_rel_entry.value = arrow.get(timestamp).humanize()
-        self.ts_rel_entry.read_only = True
+        if not self.ts_rel_entry.selection_present():
+            self.ts_rel_entry.read_only = False
+            self.ts_rel_entry.value = arrow.get(timestamp).humanize()
+            self.ts_rel_entry.read_only = True
 
         if self.shown:
             self.after(1000, lambda: self.update_relative_ts(timestamp))
@@ -150,15 +155,6 @@ class TimestampConverter(MainWindow):
             self.destroy()
         else:
             self.hide()
-
-    def bind_shift_keys(self):
-        """
-        Create binds to detect whether shift key is pressed or not.
-        """
-        self.bind_to_event("<Shift_L>", lambda _: self.set_shift_state(True))
-        self.bind_to_event("<Shift_R>", lambda _: self.set_shift_state(True))
-        self.bind_to_event("<KeyRelease-Shift_L>", lambda _: self.set_shift_state(False))
-        self.bind_to_event("<KeyRelease-Shift_R>", lambda _: self.set_shift_state(False))
 
     def set_shift_state(self, pressed: bool):
         """
@@ -182,24 +178,6 @@ class TimestampConverter(MainWindow):
         self.deiconify()
         self.lift()
         self.shown = True
-
-    def last_clicked(self, event):
-        """
-        Save where we last clicked.
-
-        :param event: An event that Tkinter passes in.
-        """
-        self.last_x, self.last_y = event.x, event.y
-
-    def move_window(self, event):
-        """
-        Move the window.
-
-        :param event: An event that Tkinter passes in.
-        """
-        self.geometry(f"+{event.x - self.last_x + self.position.x}"
-                      f"+{event.y - self.last_y + self.position.y}")
-
 
 
 tsc = TimestampConverter()
