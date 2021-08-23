@@ -17,8 +17,8 @@ class TimestampConverter(MainWindow):
         self.update()
         self.resizable(False, False)
         icon_path = Path.cwd() / "icon.ico"
-        if icon_path.exists():
-            self.iconbitmap(str(icon_path))
+        assert icon_path.exists()
+        self.iconbitmap(str(icon_path))
         self.on_close = self.close_window
         self.shown = False
         self.hide()
