@@ -1,4 +1,5 @@
 import tkinter as tk
+from pathlib import Path
 
 import arrow
 from TkZero.Entry import Entry
@@ -12,8 +13,12 @@ class TimestampConverter(MainWindow):
     def __init__(self):
         super().__init__()
         self.title = "Timestamp Converter"
-        self.resizable(False, False)
         self.make_gui()
+        self.update()
+        self.resizable(False, False)
+        icon_path = Path.cwd() / "icon.ico"
+        if icon_path.exists():
+            self.iconbitmap(str(icon_path))
         self.on_close = self.close_window
         self.shown = False
         self.hide()
@@ -24,10 +29,7 @@ class TimestampConverter(MainWindow):
         self.bind_to_event("<KeyRelease-Shift_L>", lambda _: self.set_shift_state(False))
         self.bind_to_event("<KeyRelease-Shift_R>", lambda _: self.set_shift_state(False))
 
-        try:
-            self.last_cb_entry = self.clipboard_get()
-        except tk.TclError:
-            self.last_cb_entry = ""
+        self.last_cb_entry = self.clipboard_get()
         self.check_for_new_clipboard_entry()
 
     def make_gui(self):
