@@ -2,9 +2,12 @@ import tkinter as tk
 from pathlib import Path
 
 import arrow
+from PIL import Image
 from TkZero.Entry import Entry
 from TkZero.Label import Label
 from TkZero.MainWindow import MainWindow
+from pystray import Icon, Menu, MenuItem
+from threading import Thread
 
 date_format = "HH:mm:ss ddd, MMM Do, YYYY"
 
@@ -31,6 +34,15 @@ class TimestampConverter(MainWindow):
 
         self.last_cb_entry = self.clipboard_get()
         self.check_for_new_clipboard_entry()
+
+        image = Image.open(icon_path)
+        menu = Menu(MenuItem("Quit", self.destroy))
+        self.icon = Icon("name", image, "Timestamp Converter", menu)
+        # This won't work on macOS cause macOS' tray icon implementation
+        # requires that icon runs in the main thread but Tkinter also needs
+        # to run in the main thread. So we sacrifice macOS compatibility.
+        t = Thread(target=self.icon.run, daemon=True)
+        t.start()
 
     def make_gui(self):
         """
@@ -157,6 +169,10 @@ class TimestampConverter(MainWindow):
             self.destroy()
         else:
             self.hide()
+
+    def destroy(self):
+        self.icon.stop()
+        super().destroy()
 
     def set_shift_state(self, pressed: bool):
         """

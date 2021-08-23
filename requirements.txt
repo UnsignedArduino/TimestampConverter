@@ -1,2 +1,4 @@
-arrow
-TkZero
+arrow~=1.1.1
+TkZero~=0.1.2
+Pillow~=8.3.1
+pystray~=0.17.3
